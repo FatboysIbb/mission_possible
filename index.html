@@ -3,29 +3,29 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <title>Mission Possible</title>
+  <title>Mission Possible – Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
-    body { font-family: sans-serif; padding: 2em; background: #f4f4f4; }
+    body { font-family: sans-serif; background: #f4f4f4; padding: 2em; }
     .container { max-width: 500px; margin: auto; background: white; padding: 2em; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
     h1, h2 { text-align: center; }
-    input, button { width: 100%; padding: 0.5em; margin: 0.5em 0; font-size: 1em; }
-    #missions li { margin: 0.5em 0; }
+    input, button { width: 100%; padding: 0.5em; margin-top: 0.5em; font-size: 1em; }
+    ul li { margin-bottom: 0.5em; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Mission Possible</h1>
-    <div id="auth">
+    <div id="login-area">
       <input type="text" id="username" placeholder="Benutzername" />
       <input type="password" id="password" placeholder="Passwort oder PIN" />
       <button onclick="login()">Login / Registrieren</button>
     </div>
-    <div id="app" style="display:none">
-      <h2>Hallo, <span id="player-name"></span>!</h2>
-      <p>Hier sind deine geheimen Missionen:</p>
+    <div id="mission-area" style="display:none;">
+      <h2>Willkommen, <span id="player-name"></span>!</h2>
+      <p>Deine heutigen Missionen:</p>
       <ul id="missions"></ul>
-      <button onclick="getMissions()">Missionen neu laden</button>
+      <p>Punktestand: <span id="score">0</span></p>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

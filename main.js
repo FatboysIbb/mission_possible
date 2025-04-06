@@ -1,45 +1,54 @@
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 let currentUser = null;
+let currentPoints = 0;
 
 async function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
 
   if (!username || !password) {
-    alert("Bitte Benutzername und Passwort eingeben.");
+    alert("Bitte fülle alle Felder aus.");
     return;
   }
 
-  let { data, error } = await client.auth.signInWithPassword({
-    email: username + "@example.com",
-    password: password
-  });
+  const { data: users } = await client
+    .from("players")
+    .select("*")
+    .eq("username", username)
+    .limit(1);
 
-  if (error && error.message.includes("Invalid login credentials")) {
-    // Registrieren
-    ({ data, error } = await client.auth.signUp({
-      email: username + "@example.com",
-      password: password
-    }));
+  if (users.length > 0) {
+    const user = users[0];
+    if (user.password !== password) {
+      alert("Falsches Passwort.");
+      return;
+    }
+    currentUser = user;
+  } else {
+    const { data, error } = await client.from("players").insert([{
+      username,
+      password,
+      points: 0
+    }]);
+    if (error) {
+      alert("Fehler bei Registrierung: " + error.message);
+      return;
+    }
+    currentUser = { username, points: 0 };
   }
 
-  if (error) {
-    alert("Fehler beim Login: " + error.message);
-    return;
-  }
+  document.getElementById("login-area").style.display = "none";
+  document.getElementById("mission-area").style.display = "block";
+  document.getElementById("player-name").textContent = currentUser.username;
+  document.getElementById("score").textContent = currentUser.points;
 
-  currentUser = username;
-  document.getElementById("auth").style.display = "none";
-  document.getElementById("app").style.display = "block";
-  document.getElementById("player-name").textContent = currentUser;
-
-  getMissions();
+  loadMissions();
 }
 
-async function getMissions() {
+function loadMissions() {
   const missions = [
-    "Überrede jemanden, dir ein Getränk zu bringen.",
     "Erzähle dreimal dieselbe Geschichte – mit unterschiedlichen Enden.",
     "Bring jemanden dazu, dir seine Socken zu zeigen.",
     "Streue ein Gerücht, dass jemand heute eine geheime Rolle hat.",
@@ -55,10 +64,9 @@ async function getMissions() {
     "Erzähle jemandem ein 'Geheimnis', das komplett erfunden ist."
   ];
 
+  const selected = missions.sort(() => 0.5 - Math.random()).slice(0, 3);
   const list = document.getElementById("missions");
   list.innerHTML = "";
-
-  const selected = missions.sort(() => 0.5 - Math.random()).slice(0, 3);
   selected.forEach(m => {
     const li = document.createElement("li");
     li.textContent = m;
