@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mission Possible</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body { font-family: sans-serif; padding: 2em; background: #f4f4f4; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 2em; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h1, h2 { text-align: center; }
+    input, button { width: 100%; padding: 0.5em; margin: 0.5em 0; font-size: 1em; }
+    #missions li { margin: 0.5em 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Mission Possible</h1>
+    <div id="auth">
+      <input type="text" id="username" placeholder="Benutzername" />
+      <input type="password" id="password" placeholder="Passwort oder PIN" />
+      <button onclick="login()">Login / Registrieren</button>
+    </div>
+    <div id="app" style="display:none">
+      <h2>Hallo, <span id="player-name"></span>!</h2>
+      <p>Hier sind deine geheimen Missionen:</p>
+      <ul id="missions"></ul>
+      <button onclick="getMissions()">Missionen neu laden</button>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
