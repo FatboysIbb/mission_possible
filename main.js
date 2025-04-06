@@ -1,8 +1,6 @@
-
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
-let currentPoints = 0;
 
 async function login() {
   const username = document.getElementById("username").value.trim();
@@ -13,13 +11,19 @@ async function login() {
     return;
   }
 
-  const { data: users } = await client
+  // Try to fetch existing user
+  const { data: users, error: selectError } = await client
     .from("players")
     .select("*")
     .eq("username", username)
     .limit(1);
 
-  if (users.length > 0) {
+  if (selectError) {
+    alert("Fehler beim Abrufen der Spielerdaten: " + selectError.message);
+    return;
+  }
+
+  if (users && users.length > 0) {
     const user = users[0];
     if (user.password !== password) {
       alert("Falsches Passwort.");
@@ -27,18 +31,22 @@ async function login() {
     }
     currentUser = user;
   } else {
-    const { data, error } = await client.from("players").insert([{
+    // Register new player
+    const { data, error: insertError } = await client.from("players").insert([{
       username,
       password,
       points: 0
     }]);
-    if (error) {
-      alert("Fehler bei Registrierung: " + error.message);
+
+    if (insertError) {
+      alert("Fehler bei Registrierung: " + insertError.message);
       return;
     }
+
     currentUser = { username, points: 0 };
   }
 
+  // Login successful
   document.getElementById("login-area").style.display = "none";
   document.getElementById("mission-area").style.display = "block";
   document.getElementById("player-name").textContent = currentUser.username;
